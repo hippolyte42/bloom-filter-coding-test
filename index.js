@@ -54,8 +54,8 @@ class BloomFilter{
 module.exports = BloomFilter;
 
 // test cases
-// const filter = new BloomFilter();
+//const filter = new BloomFilter();
 // console.log(filter.test("word1")); //-> false
-// filter.add("word1");
+//filter.add("test1");
 // console.log(filter.test("word1")); //-> true
 // console.log(filter.test("word2")); //-> false
