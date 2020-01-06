@@ -12,14 +12,14 @@ test('on peut ajouter des éléments au storage', () => {
 });
 
 test('hashIt retourne bel et bien un nombre entre 0 et 217 depuis une chaine hex crée par sha1, sha256 et sha512', () => {
-  const filter = new BloomFilter();
+  const filter = new BloomFilter(128, 3);
   expect(filter.hashIt("word1", "sha1")).toEqual(5);
   expect(filter.hashIt("word1", "sha256")).toEqual(102);
   expect(filter.hashIt("word1", "sha512")).toEqual(24);
 });
 
 test('on peut vérifier si l\'élément est présent dans le storage', () => {
-  const filter = new BloomFilter();
+  const filter = new BloomFilter(128, 3);
   expect(filter.test("word1")).toEqual(false);
   filter.add("word1");
   expect(filter.test("word1")).toEqual(true);

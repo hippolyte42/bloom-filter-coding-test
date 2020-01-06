@@ -1,16 +1,23 @@
-// je charge le module crypto qui nous permetra de hasher nos chaines de caractere
+// je charge le module crypto qui nous permettra de hasher nos chaines de caractere
 const crypto = require('crypto');
 
 class BloomFilter{
-  constructor(){
-    // je crée un tableau de 128 cases rempli de 0
-    this.storage = new Array(128).fill(0);
-    // je crée un tableau contenant les algorithmes utilisés pour hasher mes entrées
-    this.algo = ["sha1", "sha256", "sha512"];
+  constructor(n = 128, k = 3){
+    this.size = n;
+    this.k = k;
+    // je crée un tableau storage de n cases rempli de 0
+    this.storage = new Array(this.size).fill(0);
+    // je crée un tableau algo contenant les k algorithmes utilisés pour hasher mes entrées
+    const secureHashAlgorithms = ["sha1", "sha256", "sha512"];
+    this.algo = [];
+    for (let i = 0; i < k; i++){
+      this.algo.push(secureHashAlgorithms[i]);
+    }
   }
 
   add(entry){
-    // j'envoie la chaine entry à mes fonctions de hash; chaque fonction retourne un nombre index entre 0 et 217, on marque ces index à 1 dans notre tableau storage
+    // j'envoie la chaine entry à mes fonctions de hash; chaque fonction retourne un nombre index entre 0 et 217
+    //on marque ces index à 1 dans notre tableau storage
     for (let i = 0; i < this.algo.length; i++){
       this.storage[this.hashIt(entry, this.algo[i])] = 1;
     }
