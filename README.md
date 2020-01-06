@@ -9,4 +9,4 @@ installer [Node.js](https://nodejs.org/en/download/)
 npm install
 
 ## test
-jest test.js --watch(optional)
+npm run test
