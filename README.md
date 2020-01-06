@@ -1,4 +1,4 @@
-# BloomFilter
+# bloom-filter
 A javascript bloom filter for Polyconseil
 
 # install
