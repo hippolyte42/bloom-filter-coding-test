@@ -1,5 +1,7 @@
 const BloomFilter = require('./index.js');
 
+// https://jestjs.io/en/
+
 test('BloomFilter est une classe', () => {
   expect(typeof BloomFilter.prototype.constructor).toEqual('function');
 });
