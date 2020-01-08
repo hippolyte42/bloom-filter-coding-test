@@ -126,7 +126,7 @@ function getLessCollisionHash(elemCount, size){
       // genere une chaine de six charactères aléatoires (0 <= char < 10 || a <= char <= z)
       filter.add(Math.random().toString(36).substring(7));
       //filter.add("wordtest"+i);
-      // si le on trouve le meme nombre de 1 dans notre storage on peut déduire qu'il y a eu collision
+      // si le on trouve le meme nombre de 1 dans notre storage qu'au précédant passage on peut déduire qu'il y a eu collision
       if (filter.storage.join("").split("0").length === pastIndexCount){
         collision++;
       }
@@ -136,14 +136,13 @@ function getLessCollisionHash(elemCount, size){
     // j'ajoute le nombre de collision calculé à l'indice k - 1
     lessColHash.push(collision);
   }
-  //console.log(lessColHash);
   // je retourne l'indice + 1 du min de notre tableau lessColHash donc le k qui génère le moins de collisions
   return (lessColHash.indexOf(Math.min.apply(null, lessColHash)) + 1);
 }
 
 // test cases pour getLessCollisionHash(elemCount, size)
 
-// si l'on veut savoir sur 100 quel nombre k d'algo engendre le moins de collision
+// si l'on veut savoir avec 100 répétitions, quel nombre k d'algo génère le moins de collision
 let count = [0, 0, 0]
 for (let i = 0; i < 100; i++){
     count[getLessCollisionHash(80, 128) - 1] += 1;
