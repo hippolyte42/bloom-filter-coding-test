@@ -31,9 +31,9 @@ test('logPresent(searched) retourne les chaines présentes ou passées à cet in
   filter.add("word1");
   filter.add("word2");
   filter.add("word3");
-  expect(filter.logPresent("word1")).toBe("pour l'indice 3 word1 partage l'indice avec word2\npour l\'indice 0 word1 partage l\'indice avec word2 et word3\npour l\'indice 2 word1 est seul");
-  expect(filter.logPresent("word2")).toBe("pour l\'indice 3 word2 partage l\'indice avec word1\npour l\'indice 0 word2 partage l\'indice avec word1 et word3\npour l\'indice 4 word2 est seul");
-  expect(filter.logPresent("word4")).toBe("pour l\'indice 0 word4 partage l\'indice avec word1, word2 et word3\npour l\'indice 0 word4 partage l\'indice avec word1, word2 et word3\npour l\'indice 3 word4 partage l\'indice avec word1 et word2");
+  expect(filter.logPresent("word1")).toBe("pour l\'indice 3: word1 partage l\'indice avec word2\npour l\'indice 0: word1 partage l\'indice avec word2 et word3\npour l\'indice 2: word1 est seul");
+  expect(filter.logPresent("word2")).toBe("pour l\'indice 3: word2 partage l\'indice avec word1\npour l\'indice 0: word2 partage l\'indice avec word1 et word3\npour l\'indice 4: word2 est seul");
+  expect(filter.logPresent("word4")).toBe("pour l\'indice 0: word4 partage l\'indice avec word1, word2 et word3\npour l\'indice 0: word4 partage l\'indice avec word1, word2 et word3\npour l\'indice 3: word4 partage l\'indice avec word1 et word2");
 });
 
 test('on peut vérifier si l\'élément est probablement présent dans le storage ou non', () => {

@@ -59,7 +59,7 @@ class BloomFilter{
     // avec un chaine logged formatée
     let logged = "";
     for(let i = 0; i < searchedIds.length; i++){
-      // je stock les chaines présentes ou passées à cet indice si ils sont différents du mot searched
+      // je stock les chaines présentes ou passées à cet indice si elles sont différents du mot searched
       let encountered = [];
       for (let u = 0; u < this.key[searchedIds[i]].length; u++){
         if (this.encountered[this.key[searchedIds[i]][u]] !== searched){
@@ -68,7 +68,7 @@ class BloomFilter{
       }
       // si j'en ai trouvé je les affiche sinon j'affiche un message
       if (encountered.length !== 0){
-        logged += "pour l'indice "+String(searchedIds[i])+" "+searched+" partage l'indice avec ";
+        logged += "pour l'indice "+String(searchedIds[i])+": "+searched+" partage l'indice avec ";
         for (let e = 0; e < encountered.length; e++){
           if (e === encountered.length - 1 && e === 0){
             logged += encountered[e];
@@ -81,8 +81,8 @@ class BloomFilter{
             }
           }
         }
-      } else {
-        logged += "pour l'indice "+String(searchedIds[i])+" "+searched+" est seul";
+      } else{
+        logged += "pour l'indice "+String(searchedIds[i])+": "+searched+" est seul";
       }
       if (i !== searchedIds.length - 1){
         logged += "\n";
@@ -112,22 +112,42 @@ class BloomFilter{
 
 module.exports = BloomFilter;
 
-// test cases
-// const filter = new BloomFilter(6, 3);
-// console.log(filter.test("word1")); //-> false
-// filter.add("word1");
-// filter.add("word2");
-// filter.add("word3");
-// filter.logPresent("word1");
-// filter.logPresent("word2");
-// filter.logPresent("word4");
-// console.log(filter.test("word1")); //-> true
-// console.log(filter.test("word2")); //-> false
-// filter.add("word2");
-// filter.add("word3");
-// filter.add("word4");
-// filter.add("word5");
-// filter.add("word6");
-// filter.add("word7");
-// filter.add("word8");
-// filter.add("word9");
+function getLessCollisionHash(elemCount, size){
+  // lessColHash contiendra le nombre de collision à l'indice k - 1
+  const lessColHash = [];
+  // on répète pour les 0 < k <= 3 algorithmes
+  for (let k = 1; k <= 3; k++){
+    // on crée un nouveau filter que l'on va remplir avec elemCount entry
+    const filter = new BloomFilter(size, k);
+    let collision = 0;
+    let pastIndexCount = 0;
+    // on ajoute les elemCount entry au storage du filter avec add(entry)
+    for (let i = 0; i < elemCount; i++){
+      // genere une chaine de six charactères aléatoires (0 <= char < 10 || a <= char <= z)
+      filter.add(Math.random().toString(36).substring(7));
+      //filter.add("wordtest"+i);
+      // si le on trouve le meme nombre de 1 dans notre storage on peut déduire qu'il y a eu collision
+      if (filter.storage.join("").split("0").length === pastIndexCount){
+        collision++;
+      }
+      // on stock le nombre de 1 présent dans le storage actuellement
+      pastIndexCount = filter.storage.join("").split("0").length;
+    }
+    // j'ajoute le nombre de collision calculé à l'indice k - 1
+    lessColHash.push(collision);
+  }
+  //console.log(lessColHash);
+  // je retourne l'indice + 1 du min de notre tableau lessColHash donc le k qui génère le moins de collisions
+  return (lessColHash.indexOf(Math.min.apply(null, lessColHash)) + 1);
+}
+
+// test cases pour getLessCollisionHash(elemCount, size)
+
+// si l'on veut savoir sur 100 quel nombre k d'algo engendre le moins de collision
+let count = [0, 0, 0]
+for (let i = 0; i < 100; i++){
+    count[getLessCollisionHash(80, 128) - 1] += 1;
+}
+console.log(count);
+
+//console.log(getLessCollisionHash(80, 128))
