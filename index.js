@@ -21,18 +21,24 @@ class BloomFilter{
   }
 
   add(entry){
-    // je stock l'indice dans le tableau encountered de la nouvelle entrée
-    const entryId = this.encountered.length;
     // je stock la chaine rencontrée si c'est le premier ajout
-    if (this.encountered.includes(entry) === false){
+    if (this.encountered.includes(entry) === true){
+      return;
+    } else {
       this.encountered.push(entry);
     }
+    // je stock l'indice dans le tableau encountered de la nouvelle entrée
+    const entryId = this.encountered.length;
     // j'envoie la chaine entry à mes fonctions de hash; chaque fonction retourne un nombre indice entre 0 et n size
-    //on marque ces indice à 1 dans notre tableau storage
+    // on marque ces indice à 1 dans notre tableau storage
     for (let i = 0; i < this.algo.length; i++){
       let hashedId = this.hashToId(entry, this.algo[i]);
       this.storage[hashedId] = 1;
-      if (this.key[hashedId].includes(entryId) === false){
+      // je vérifie que l'on a pas déjà ajouté cet indice à notre tableau key pour l'indice hashedId
+      // if (this.key[hashedId].includes(entryId) === false){
+      //   this.key[hashedId].push(entryId);
+      // }
+      if (this.key[hashedId][this.key[hashedId].length - 1] !== entryId){
         this.key[hashedId].push(entryId);
       }
     }
@@ -62,23 +68,23 @@ class BloomFilter{
     let logged = "";
     for(let i = 0; i < searchedIds.length; i++){
       // je stock les chaines présentes ou passées à cet indice si elles sont différents du mot searched
-      let encountered = [];
+      let common = [];
       for (let u = 0; u < this.key[searchedIds[i]].length; u++){
-        if (this.encountered[this.key[searchedIds[i]][u]] !== searched){
-          encountered.push(this.encountered[this.key[searchedIds[i]][u]]);
+        if (this.key[searchedIds[i]][u] !== this.encountered.indexOf(searched) + 1){
+          common.push(this.encountered[this.key[searchedIds[i]][u] - 1]);
         }
       }
       // si j'en ai trouvé je les affiche sinon j'affiche un message
-      if (encountered.length !== 0){
+      if (common.length !== 0){
         logged += "pour l'indice "+String(searchedIds[i])+": "+searched+" partage l'indice avec ";
-        for (let e = 0; e < encountered.length; e++){
-          if (e === encountered.length - 1 && e === 0){
-            logged += encountered[e];
-          } else if (e === encountered.length - 1){
-            logged += " et "+encountered[e];
+        for (let e = 0; e < common.length; e++){
+          if (e === common.length - 1 && e === 0){
+            logged += common[e];
+          } else if (e === common.length - 1){
+            logged += " et "+common[e];
           } else {
-            logged += encountered[e];
-            if (e !== encountered.length - 2){
+            logged += common[e];
+            if (e !== common.length - 2){
               logged += ", ";
             }
           }
@@ -162,3 +168,11 @@ function getLeastCollisionHash(elemCount, size){
 
 //console.log(getLeastCollisionHash(20, 128))
 //console.log(getLeastCollisionHash(80, 128))
+
+// autres test cases
+
+// let filter = new BloomFilter(6, 3);
+// filter.add("word1");
+// filter.add("word2");
+// filter.add("word3");
+// filter.logPresent("word1");
