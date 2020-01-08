@@ -32,7 +32,9 @@ class BloomFilter{
     for (let i = 0; i < this.algo.length; i++){
       let hashedId = this.hashToId(entry, this.algo[i]);
       this.storage[hashedId] = 1;
-      this.key[hashedId].push(entryId);
+      if (this.key[hashedId].includes(entryId) === false){
+        this.key[hashedId].push(entryId);
+      }
     }
   }
 
@@ -112,13 +114,14 @@ class BloomFilter{
 
 module.exports = BloomFilter;
 
-function getLessCollisionHash(elemCount, size){
+// la fonction getLeastCollisionHash(elemCount, size) retourne le nombre d'algo générant le moins de collision pour elemCount nombre d'éléments et size la taille de notre storage
+function getLeastCollisionHash(elemCount, size){
   // lessColHash contiendra le nombre de collision à l'indice k - 1
   const lessColHash = [];
   // on répète pour les 0 < k <= 3 algorithmes
   for (let k = 1; k <= 3; k++){
     // on crée un nouveau filter que l'on va remplir avec elemCount entry
-    const filter = new BloomFilter(size, k);
+    let filter = new BloomFilter(size, k);
     let collision = 0;
     let pastIndexCount = 0;
     // on ajoute les elemCount entry au storage du filter avec add(entry)
@@ -126,27 +129,36 @@ function getLessCollisionHash(elemCount, size){
       // genere une chaine de six charactères aléatoires (0 <= char < 10 || a <= char <= z)
       filter.add(Math.random().toString(36).substring(7));
       //filter.add("wordtest"+i);
+      // je crée une chaine de caractères à partir du tableau storage, je crée un array (un nouvel élement à chaque 0 rencontré)
+      //je recolle le tout pour former une chaine de 1 (mon nombre d'indice ajouté)
       // si le on trouve le meme nombre de 1 dans notre storage qu'au précédant passage on peut déduire qu'il y a eu collision
-      if (filter.storage.join("").split("0").length === pastIndexCount){
+      if (filter.storage.join("").split("0").join("").length === pastIndexCount){
         collision++;
       }
       // on stock le nombre de 1 présent dans le storage actuellement
-      pastIndexCount = filter.storage.join("").split("0").length;
+      pastIndexCount = filter.storage.join("").split("0").join("").length;
+    }
+    // s'il n'y a pas eu de collision je retourne le k courant (pas besoin de véfier le reste des cas)
+    if (collision === 0){
+      return (k);
     }
     // j'ajoute le nombre de collision calculé à l'indice k - 1
     lessColHash.push(collision);
   }
-  // je retourne l'indice + 1 du min de notre tableau lessColHash donc le k qui génère le moins de collisions
+  // je retourne l'indice + 1 du min de notre tableau lessColHash, le nombre k d'algorithme utilisé produisant le moins de collisions
   return (lessColHash.indexOf(Math.min.apply(null, lessColHash)) + 1);
 }
 
-// test cases pour getLessCollisionHash(elemCount, size)
+// test cases pour getLeastCollisionHash(elemCount, size)
 
-// si l'on veut savoir avec 100 répétitions, quel nombre k d'algo génère le moins de collision
-let count = [0, 0, 0]
-for (let i = 0; i < 100; i++){
-    count[getLessCollisionHash(80, 128) - 1] += 1;
-}
-console.log(count);
+// si l'on veut savoir avec x occurences, quel nombre k d'algorithmes produit le moins de collision
+// on affiche, dans un array count, le nombre de fois que le nombre indice k a produit le moins de collision
+// let x = 1000;
+// let count = [0, 0, 0]
+// for (let i = 0; i < x; i++){
+//     count[getLeastCollisionHash(80, 128) - 1] += 1;
+// }
+// console.log(count);
 
-//console.log(getLessCollisionHash(80, 128))
+//console.log(getLeastCollisionHash(20, 128))
+//console.log(getLeastCollisionHash(80, 128))
