@@ -24,20 +24,16 @@ class BloomFilter{
     // je stock la chaine rencontrée si c'est le premier ajout
     if (this.encountered.includes(entry) === true){
       return;
-    } else {
-      this.encountered.push(entry);
     }
+    this.encountered.push(entry);
     // je stock l'indice dans le tableau encountered de la nouvelle entrée
-    const entryId = this.encountered.length;
+    const entryId = this.encountered.length - 1;
     // j'envoie la chaine entry à mes fonctions de hash; chaque fonction retourne un nombre indice entre 0 et n size
     // on marque ces indice à 1 dans notre tableau storage
     for (let i = 0; i < this.algo.length; i++){
       let hashedId = this.hashToId(entry, this.algo[i]);
       this.storage[hashedId] = 1;
       // je vérifie que l'on a pas déjà ajouté cet indice à notre tableau key pour l'indice hashedId
-      // if (this.key[hashedId].includes(entryId) === false){
-      //   this.key[hashedId].push(entryId);
-      // }
       if (this.key[hashedId][this.key[hashedId].length - 1] !== entryId){
         this.key[hashedId].push(entryId);
       }
@@ -63,41 +59,11 @@ class BloomFilter{
     for (let i = 0; i < this.algo.length; i++){
       searchedIds.push(this.hashToId(searched, this.algo[i]));
     }
-    // pour chacun des indices trouvés je vais afficher, si elles existent, les chaines présentes ou passées à cet indice
-    // avec un chaine logged formatée
-    let logged = "";
-    for(let i = 0; i < searchedIds.length; i++){
-      // je stock les chaines présentes ou passées à cet indice si elles sont différents du mot searched
-      let common = [];
-      for (let u = 0; u < this.key[searchedIds[i]].length; u++){
-        if (this.key[searchedIds[i]][u] !== this.encountered.indexOf(searched) + 1){
-          common.push(this.encountered[this.key[searchedIds[i]][u] - 1]);
-        }
-      }
-      // si j'en ai trouvé je les affiche sinon j'affiche un message
-      if (common.length !== 0){
-        logged += "pour l'indice "+String(searchedIds[i])+": "+searched+" partage l'indice avec ";
-        for (let e = 0; e < common.length; e++){
-          if (e === common.length - 1 && e === 0){
-            logged += common[e];
-          } else if (e === common.length - 1){
-            logged += " et "+common[e];
-          } else {
-            logged += common[e];
-            if (e !== common.length - 2){
-              logged += ", ";
-            }
-          }
-        }
-      } else{
-        logged += "pour l'indice "+String(searchedIds[i])+": "+searched+" est seul";
-      }
-      if (i !== searchedIds.length - 1){
-        logged += "\n";
-      }
-    }
-    console.log(logged);
-    return logged;
+    // je stock dans un tableau aux indices searchedIds trouvés les chaines présentes ou passées à cet indice
+    let commonByHashedId = [];
+    commonByHashedId = searchedIds.map(searchId => [searchId, this.key[searchId].map(encounteredId => this.encountered[encounteredId])]);
+    console.log(commonByHashedId);
+    return commonByHashedId;
   }
 
   // hash une chaine de caractere, retourne un indice généré depuis la chaine hashée, entre 0 et n size
@@ -113,8 +79,8 @@ class BloomFilter{
     for (let i = 0; i < hash.length; i++){
       hashSum += hash[i].charCodeAt();
     }
-    // je retourne hashSum modulo n size arrondi à la valeur entière inférieure, pour m'assurer d'avoir un indice compris entre 0 et n size
-    return Math.floor(hashSum % this.size);
+    // je retourne hashSum modulo n size, pour m'assurer d'avoir un indice compris entre 0 et n size
+    return hashSum % this.size;
   }
 }
 
@@ -136,7 +102,6 @@ function getLeastCollisionHash(elemCount, size){
     let filter = new BloomFilter(size, k);
     let collision = 0;
     let pastIndexCount = 0;
-
     // on ajoute les elemCount entry au storage du filter avec add(entry)
     for (let i = 0; i < elemCount; i++){
       filter.add(randomWords[i]);
@@ -174,10 +139,12 @@ function getLeastCollisionHash(elemCount, size){
 //console.log(getLeastCollisionHash(20, 128))
 //console.log(getLeastCollisionHash(80, 128))
 
-// autres test cases
+// test cases pour logPresent(searched)
 
 // let filter = new BloomFilter(6, 3);
 // filter.add("word1");
 // filter.add("word2");
 // filter.add("word3");
 // filter.logPresent("word1");
+// filter.logPresent("word2");
+// filter.logPresent("word3");
