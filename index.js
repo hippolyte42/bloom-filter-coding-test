@@ -122,6 +122,12 @@ module.exports = BloomFilter;
 
 // la fonction getLeastCollisionHash(elemCount, size) retourne le nombre d'algo générant le moins de collision pour elemCount nombre d'éléments et size la taille de notre storage
 function getLeastCollisionHash(elemCount, size){
+  // je crée un tableau de mots générés aléatoirement
+  let randomWords = [];
+  for (let i = 0; i < elemCount; i++){
+    // génere une chaine de six charactères aléatoires (0 <= char < 10 || a <= char <= z)
+    randomWords.push(Math.random().toString(36).substring(7));
+  }
   // lessColHash contiendra le nombre de collision à l'indice k - 1
   const lessColHash = [];
   // on répète pour les 0 < k <= 3 algorithmes
@@ -130,11 +136,10 @@ function getLeastCollisionHash(elemCount, size){
     let filter = new BloomFilter(size, k);
     let collision = 0;
     let pastIndexCount = 0;
+
     // on ajoute les elemCount entry au storage du filter avec add(entry)
     for (let i = 0; i < elemCount; i++){
-      // genere une chaine de six charactères aléatoires (0 <= char < 10 || a <= char <= z)
-      filter.add(Math.random().toString(36).substring(7));
-      //filter.add("wordtest"+i);
+      filter.add(randomWords[i]);
       // je crée une chaine de caractères à partir du tableau storage, je crée un array (un nouvel élement à chaque 0 rencontré)
       //je recolle le tout pour former une chaine de 1 (mon nombre d'indice ajouté)
       // si le on trouve le meme nombre de 1 dans notre storage qu'au précédant passage on peut déduire qu'il y a eu collision
@@ -159,10 +164,10 @@ function getLeastCollisionHash(elemCount, size){
 
 // si l'on veut savoir avec x occurences, quel nombre k d'algorithmes produit le moins de collision
 // on affiche, dans un array count, le nombre de fois que le nombre indice k a produit le moins de collision
-// let x = 1000;
+// let x = 100;
 // let count = [0, 0, 0]
 // for (let i = 0; i < x; i++){
-//     count[getLeastCollisionHash(80, 128) - 1] += 1;
+//     count[getLeastCollisionHash(80, 1280) - 1] += 1;
 // }
 // console.log(count);
 
