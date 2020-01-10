@@ -31,9 +31,9 @@ test('logPresent(searched) retourne les chaines présentes ou passées à cet in
   filter.add("word1");
   filter.add("word2");
   filter.add("word3");
-  expect(filter.logPresent("word1")).toBe("word2word2,word3");
-  expect(filter.logPresent("word2")).toBe("word1word1,word3");
-  expect(filter.logPresent("word4")).toBe("word1,word2,word3word1,word2,word3word1,word2");
+  expect(filter.logPresent("word1")).toEqual(expect.arrayContaining([[3,['word1','word2']],[0, ['word1', 'word2', 'word3']], [2, ['word1']]]));
+  expect(filter.logPresent("word2")).toEqual(expect.arrayContaining([[3, ['word1', 'word2']],[0, ['word1', 'word2', 'word3']],[4, ['word2']]]));
+  expect(filter.logPresent("word3")).toEqual(expect.arrayContaining([[1, ['word3']],[5, ['word3']],[0, ['word1', 'word2', 'word3']]]));
 });
 
 test('on peut vérifier si l\'élément est probablement présent dans le storage ou non', () => {
