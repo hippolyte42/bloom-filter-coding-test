@@ -1,10 +1,10 @@
 # bloom-filter
-mon bloom filter en javascript avec Node.js pour Polyconseil
+javascript bloom filter
 
-voir [sujet](https://github.com/HippolyteJacque/bloom-filter/blob/master/sujet.pdf)
+[sujet](https://github.com/HippolyteJacque/bloom-filter/blob/master/sujet.pdf)
 
 ## install
-installer [Node.js](https://nodejs.org/en/download/)
+install [Node.js](https://nodejs.org/en/download/)
 
 npm install
 
