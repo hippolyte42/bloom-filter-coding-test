@@ -1,12 +1,10 @@
 # bloom-filter
 javascript bloom filter
 
-[sujet](https://github.com/HippolyteJacque/bloom-filter/blob/master/sujet.pdf)
-
 ## install
-install [Node.js](https://nodejs.org/en/download/)
+require [Node.js](https://nodejs.org/en/download/)
 
-npm install
+`npm install`
 
 ## test
-npm run test
+`npm run test`
